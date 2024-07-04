@@ -54,6 +54,37 @@ def remove_tool(tool_id):
     # Add logic to remove tool from inventory
     messagebox.showinfo("Success", f"Removed tool with ID {tool_id}")
 
+def employee_management():
+    employee_screen = Tk()
+    employee_screen.title("Employee Management")
+
+    Label(employee_screen, text="Add Employee").grid(row=0, column=0, columnspan=2)
+    Label(employee_screen, text="Employee Name").grid(row=1, column=0)
+    employee_name_entry = Entry(employee_screen)
+    employee_name_entry.grid(row=1, column=1)
+
+    Label(employee_screen, text="Employee ID").grid(row=2, column=0)
+    employee_id_entry = Entry(employee_screen)
+    employee_id_entry.grid(row=2, column=1)
+
+    Button(employee_screen, text="Add Employee", command=lambda: add_employee(employee_name_entry.get(), employee_id_entry.get())).grid(row=3, column=0, columnspan=2)
+
+    Label(employee_screen, text="Remove Employee").grid(row=4, column=0, columnspan=2)
+    Label(employee_screen, text="Employee ID").grid(row=5, column=0)
+    employee_remove_id_entry = Entry(employee_screen)
+    employee_remove_id_entry.grid(row=5, column=1)
+
+    Button(employee_screen, text="Remove Employee", command=lambda: remove_employee(employee_remove_id_entry.get())).grid(row=6, column=0, columnspan=2)
+
+    employee_screen.mainloop()
+
+def add_employee(name, emp_id):
+    # Add logic to add employee to the list
+    messagebox.showinfo("Success", f"Added employee {name} with ID {emp_id}")
+
+def remove_employee(emp_id):
+    # Add logic to remove employee from the list
+    messagebox.showinfo("Success", f"Removed employee with ID {emp_id}")
 
 
 
