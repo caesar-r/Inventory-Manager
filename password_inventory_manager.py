@@ -1,10 +1,16 @@
-from tkinter import Tk, Label, Entry, Button, StringVar, messagebox
+from tkinter import Tk, Label, Entry, Button, StringVar, messagebox, ttk
+#import json 
 
+# Sample tool list for draft (remove when done)
+tools = [f"Tool {i}" for i in range(1,1001)]
+employees = ["Employee 1", "Employee 2", "Employee 3"]
+
+# This function will handle the login to the program
 def login():
     username = username_entry.get()
     password = password_entry.get()
     # Add authentication logic here
-    if username == "admin" and password == "admin123":  # Sample logic User and Pass
+    if username == "" and password == "":  # Sample logic User and Pass (admin admin123)
         main_menu()
     else:
         messagebox.showerror("Login Failed", "Invalid username or password")
@@ -22,6 +28,8 @@ def main_menu():
     Button(main_screen, text="Generate Reports", command=generate_reports).pack()
 
     main_screen.mainloop()
+
+# This Function handles all the tool management such as naming the tools and adding them to the program with the quantity of tools and also being able to remove tools from the system 
 def tool_management():
     tool_screen = Tk()
     tool_screen.title("Tool Management")
