@@ -111,3 +111,36 @@ password_entry.pack()
 Button(login_screen, text="Login", command=login).pack()
 
 login_screen.mainloop()
+
+# Borrow tool function
+def borrow_tool():
+    borrow_screen = Tk()
+    borrow_screen.title("Borrow Tool")
+
+    Label(borrow_screen, text="Select Tool").grid(row=0, column=0)
+    tool_selection = StringVar()
+    tool_combobox = ttk.Combobox(borrow_screen, textvariable=tool_selection)
+    tool_combobox['values'] = tools
+    tool_combobox.grid(row=0, column=1)
+
+    Label(borrow_screen, text="Select Employee").grid(row=1, column=0)
+    employee_selection = StringVar()
+    employee_combobox = ttk.Combobox(borrow_screen, textvariable=employee_selection)
+    employee_combobox['values'] = employees
+    employee_combobox.grid(row=1, column=1)
+
+    Label(borrow_screen, text="Date Borrowed").grid(row=2, column=0)
+    date_borrowed_entry = Entry(borrow_screen)
+    date_borrowed_entry.grid(row=2, column=1)
+
+    Label(borrow_screen, text="Return Date").grid(row=3, column=0)
+    return_date_entry = Entry(borrow_screen)
+    return_date_entry.grid(row=3, column=1)
+
+    Button(borrow_screen, text="Borrow Tool", command=lambda: borrow_tool_action(tool_selection.get(), employee_selection.get(), date_borrowed_entry.get(), return_date_entry.get())).grid(row=4, column=0, columnspan=2)
+
+    borrow_screen.mainloop()
+
+    def borrow_tool_action(tool, employee, date_borrowed, return_date):
+        # Add logic to borrow tool
+        messagebox.showinfo(f"Success {employee} borrowed {tool} from {date_borrowed} to {return_date}")
