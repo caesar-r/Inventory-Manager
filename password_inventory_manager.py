@@ -29,7 +29,8 @@ def main_menu():
 
     main_screen.mainloop()
 
-# This Function handles all the tool management such as naming the tools and adding them to the program with the quantity of tools and also being able to remove tools from the system 
+# This Function handles all the tool management such as naming the tools... 
+# ...Adding them to the program with the quantity of tools and also being able to remove tools from the system 
 def tool_management():
     tool_screen = Tk()
     tool_screen.title("Tool Management")
@@ -94,24 +95,6 @@ def remove_employee(emp_id):
     # Add logic to remove employee from the list
     messagebox.showinfo("Success", f"Removed employee with ID {emp_id}")
 
-
-
-# Main entry point of the code
-login_screen = Tk()
-login_screen.title("Login")
-
-Label(login_screen, text="Username").pack()
-username_entry = Entry(login_screen)
-username_entry.pack()
-
-Label(login_screen, text="Password").pack()
-password_entry = Entry(login_screen, show='*')
-password_entry.pack()
-
-Button(login_screen, text="Login", command=login).pack()
-
-login_screen.mainloop()
-
 # Borrow tool function
 def borrow_tool():
     borrow_screen = Tk()
@@ -144,3 +127,48 @@ def borrow_tool():
     def borrow_tool_action(tool, employee, date_borrowed, return_date):
         # Add logic to borrow tool
         messagebox.showinfo(f"Success {employee} borrowed {tool} from {date_borrowed} to {return_date}")
+
+# Return tool function
+def return_tool():
+    return_screen = Tk()
+    return_screen.title("Return Tool")
+
+    Label(return_screen, text="Select Tool").grid(row=0, column=0)
+    tool_selection = StringVar()
+    tool_combobox = ttk.Combobox(return_screen, textvariable=tool_selection)
+    tool_combobox['values'] = tools
+    tool_combobox.grid(row=0, column=1)
+
+    Label(return_screen, text="Select Employee").grid(row=1, column=0)
+    employee_selection = StringVar()
+    employee_combobox = ttk.Combobox(return_screen, textvariable=employee_selection)
+    employee_combobox['values'] = employees
+    employee_combobox.grid(row=1, column=1)
+
+    Button(return_screen, text="Return Tool", command=lambda: return_tool_action(tool_selection.get(), employee_selection.get())).grid(row=2, column=0, columnspan=2)
+
+    return_screen.mainloop()
+
+def return_tool_action(tool, employee):
+    # Add logic to return tool
+    messagebox.showinfo(f"Success {employee} returned {tool}")
+
+
+
+
+# Keep this part of the code below everything else
+# Main entry point of the code
+login_screen = Tk()
+login_screen.title("Login")
+
+Label(login_screen, text="Username").pack()
+username_entry = Entry(login_screen)
+username_entry.pack()
+
+Label(login_screen, text="Password").pack()
+password_entry = Entry(login_screen, show='*')
+password_entry.pack()
+
+Button(login_screen, text="Login", command=login).pack()
+
+login_screen.mainloop()
