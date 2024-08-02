@@ -153,7 +153,44 @@ def return_tool_action(tool, employee):
     # Add logic to return tool
     messagebox.showinfo(f"Success {employee} returned {tool}")
 
+# Generate reports function
+def generate_reports():
+    report_screen = Tk()
+    report_screen.title("Generate Reports")
 
+    Button(report_screen, text="Inventory Report", command=generate_inventory_report).pack()
+    Button(report_screen, text="Borrowing History Report", command=generate_borrowing_report).pack()
+    Button(report_screen, text="Overdue Tools Report", command=generate_overdue_report).pack()
+
+    report_screen.mainloop()
+
+def generate_inventory_report():
+    # Add logic to generate inventory report
+    messagebox.showinfo("Report", "Inventory report generated")
+
+def generate_borrowing_report():
+    # Add logic to generate borrowing history report
+    messagebox.showinfo("Report", "Borrowing history report generated")
+
+def generate_overdue_report():
+    # Add logic to generate overdue tools report
+    messagebox.showinfo("Report", "Overdue tools report generated")
+
+# Main entry point
+login_screen = Tk()
+login_screen.title("Login")
+
+Label(login_screen, text="Username").pack()
+username_entry = Entry(login_screen)
+username_entry.pack()
+
+Label(login_screen, text="Password").pack()
+password_entry = Entry(login_screen, show='*')
+password_entry.pack()
+
+Button(login_screen, text="Login", command=login).pack()
+
+login_screen.mainloop()
 
 
 # Keep this part of the code below everything else
