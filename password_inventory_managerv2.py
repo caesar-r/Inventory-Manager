@@ -1,6 +1,18 @@
 from tkinter import Tk, Label, Entry, Button, StringVar, messagebox, ttk
 import json
+import datetime
+with open("tools.json") as x:
+    weapons = json.load(x)
+with open("employees.json") as x:
+    employees = json.load(x)
+for tool, tool_type in weapons.items():
+    tools = tool_type
+print(tools)
 
+employees = ["Employee 1", "Employee 2", "Employee 3"]
+# This is the main class for the system
+# This contains the main screen function along with the... 
+# ...password screen that will need to be completed before the user can enter the program 
 class InventoryManagementSystem:
     def __init__(self):
         self.tools = {}
@@ -40,11 +52,16 @@ class InventoryManagementSystem:
         self.main_screen.title("Main Menu")
 
         Label(self.main_screen, text="Welcome to the Inventory Management System").pack()
-        Button(self.main_screen, text="Tool Management", command=self.start_tool_management).pack()
-        Button(self.main_screen, text="Employee Management", command=self.start_employee_management).pack()
-        Button(self.main_screen, text="Borrow Tool", command=self.start_borrow_tool).pack()
-        Button(self.main_screen, text="Return Tool", command=self.start_return_tool).pack()
-        Button(self.main_screen, text="Generate Reports", command=self.start_generate_reports).pack()
+        Button(self.main_screen, text="Tool Management", 
+               command=self.start_tool_management).pack()
+        Button(self.main_screen, text="Employee Management",
+                command=self.start_employee_management).pack()
+        Button(self.main_screen, text="Borrow Tool",
+                command=self.start_borrow_tool).pack()
+        Button(self.main_screen, text="Return Tool",
+               command=self.start_return_tool).pack()
+        Button(self.main_screen, text="Generate Reports",
+               command=self.start_generate_reports).pack()
 
         self.main_screen.mainloop()
 
@@ -69,7 +86,8 @@ class InventoryManagementSystem:
         report_screen.show_screen()
 
 # This Function/class handles all the tool management such as naming the tools... 
-# ...Adding them to the program with the quantity of tools and also being able to remove tools from the system
+# ...Adding them to the program with the quantity of tools and also being able to...
+# ...remove tools from the system
 class ToolManagement:
     def __init__(self, tools):
         self.tools = tools
@@ -98,14 +116,14 @@ class ToolManagement:
         Button(self.tool_screen, text="Remove Tool", command=self.remove_tool).grid(row=6, column=0, columnspan=2)
 
         self.tool_screen.mainloop()
-
+    # This function will add tools to the program when entered
     def add_tool(self):
         name = self.tool_name_entry.get()
         quantity = int(self.tool_quantity_entry.get())
         tool_id = len(self.tools) + 1
         self.tools[tool_id] = {"name": name, "quantity": quantity}
         messagebox.showinfo("Success", f"Added {name} with quantity {quantity}")
-
+    #
     def remove_tool(self):
         tool_id = int(self.tool_id_entry.get())
         if tool_id in self.tools:
@@ -287,8 +305,9 @@ class ReportGeneration:
 
     def generate_overdue_report(self):
         report = "Overdue Tools Report\n\n"
-        # Assuming today's date is "2024-07-29" for demonstration
-        today = "2024-07-29"
+        # Date today for the overdue tools report, will always have the correct date
+        date_today = datetime.datetime.now()
+        today = (date_today.strftime("%d/%m/%Y"))
         for entry in self.borrowed_tools:
             if entry['return_date'] < today:
                 report += (f"Tool ID: {entry['tool_id']}, Employee: {entry['employee']}, "
