@@ -1,15 +1,88 @@
 from tkinter import Tk, Label, Entry, Button, StringVar, messagebox, ttk
 import json
 import datetime
-with open("tools.json") as x:
-    weapons = json.load(x)
-with open("employees.json") as x:
-    employees = json.load(x)
-for tool, tool_type in weapons.items():
-    tools = tool_type
-print(tools)
 
-employees = ["Employee 1", "Employee 2", "Employee 3"]
+class InventoryManagementSystem:
+    def __init__(self):
+        self.load_data()
+        self.borrowed_tools = []
+        self.login_screen = None
+        self.main_screen = None
+        self.start_login_screen()
+
+    def load_data(self):
+        try:
+            with open("tools.json", "x") as tools_file:
+                self.tools = json.load(tools_file)
+        except FileNotFoundError:
+            self.tools = {}
+            messagebox.showerror("File Not Found", "tools.json not found. Starting with an empty tool list.")
+
+        try:
+            with open("employees.json", "x") as employees_file:
+                self.employees = json.load(employees_file)
+        except FileNotFoundError:
+            self.employees = {}
+            messagebox.showerror("File Not Found", "employees.json not found. Starting with an empty employee list.")
+
+    def start_login_screen(self):
+        self.login_screen = Tk()
+        self.login_screen.title("Login")
+
+        Label(self.login_screen, text="Username").pack()
+        self.username_entry = Entry(self.login_screen)
+        self.username_entry.pack()
+
+        Label(self.login_screen, text="Password").pack()
+        self.password_entry = Entry(self.login_screen, show='*')
+        self.password_entry.pack()
+
+        Button(self.login_screen, text="Login", command=self.login).pack()
+        self.login_screen.mainloop()
+
+    def login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        if username == "" and password == "": # CHANGE TO A PASSWORD WHEN DONE
+            self.start_main_menu()
+        else:
+            messagebox.showerror("Login Failed", "Invalid username or password")
+
+    def start_main_menu(self):
+        self.login_screen.destroy()
+        self.main_screen = Tk()
+        self.main_screen.title("Main Menu")
+
+        Label(self.main_screen, text="Welcome to the Inventory Management System").pack()
+        Button(self.main_screen, text="Tool Management", command=self.start_tool_management).pack()
+        Button(self.main_screen, text="Employee Management", command=self.start_employee_management).pack()
+        Button(self.main_screen, text="Borrow Tool", command=self.start_borrow_tool).pack()
+        Button(self.main_screen, text="Return Tool", command=self.start_return_tool).pack()
+        Button(self.main_screen, text="Generate Reports", command=self.start_generate_reports).pack()
+
+        self.main_screen.mainloop()
+
+    def start_tool_management(self):
+        tool_screen = ToolManagement(self.tools)
+        tool_screen.show_screen()
+
+    def start_employee_management(self):
+        employee_screen = EmployeeManagement(self.employees)
+        employee_screen.show_screen()
+
+    def start_borrow_tool(self):
+        borrow_screen = BorrowTool(self.tools, self.employees, self.borrowed_tools)
+        borrow_screen.show_screen()
+
+    def start_return_tool(self):
+        return_screen = ReturnTool(self.tools, self.employees, self.borrowed_tools)
+        return_screen.show_screen()
+
+    def start_generate_reports(self):
+        report_screen = ReportGeneration(self.tools, self.borrowed_tools)
+        report_screen.show_screen()
+
+
 # This is the main class for the system
 # This contains the main screen function along with the... 
 # ...password screen that will need to be completed before the user can enter the program 
@@ -318,3 +391,4 @@ class ReportGeneration:
 
 if __name__ == "__main__":
     InventoryManagementSystem()
+    
