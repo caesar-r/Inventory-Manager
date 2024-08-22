@@ -3,8 +3,7 @@ import json
 import datetime
 
 # This is the main class for the system
-# This contains the main screen function along with the... 
-# ...password screen that will need to be completed before the user can enter the program 
+# This contains the password screen that will need to be completed before the user can enter the program 
 class InventoryManagementSystem:
     def __init__(self):
         self.load_data()
@@ -16,7 +15,8 @@ class InventoryManagementSystem:
         self.text_color = "#231F20"
         self.button_color = "#00B1EF"
         self.start_login_screen()
-
+    # This function will load all the data from my two JSON files
+    # If the data is not found or the file is lost the program will create a new JSON file and start fresh
     def load_data(self):
         # Load tools data
         try:
@@ -27,13 +27,14 @@ class InventoryManagementSystem:
             messagebox.showerror("File Not Found", "tools.json not found or is empty. Starting with an empty tool list.")
 
         # Load employees data
+        # If the data is not found or the file is lost the program will create a new JSON file and start fresh
         try:
             with open("employees.json", "r") as employees_file:
                 self.employees = json.load(employees_file)
         except (FileNotFoundError, json.JSONDecodeError):
             self.employees = {}
             messagebox.showerror("File Not Found", "employees.json not found or is empty. Starting with an empty employee list.")
-
+    # The two functions below will save the data to the correct JSON files respectivly
     def save_tools_data(self):
         with open("tools.json", "w") as tools_file:
             json.dump(self.tools, tools_file, indent=4)
@@ -41,7 +42,7 @@ class InventoryManagementSystem:
     def save_employees_data(self):
         with open("employees.json", "w") as employees_file:
             json.dump(self.employees, employees_file, indent=4)
-
+    # This is the first screen that the user will see for the Program it will ask for a password and username required to enter into the program
     def start_login_screen(self):
         self.login_screen = Tk()
         self.login_screen.title("Login")
@@ -61,11 +62,14 @@ class InventoryManagementSystem:
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
+        # The if statement below only will accept the password and username is they are both correct
+        # If they arent the code will display a popup window with Login Failed, Invalid username or password
         if username == "" and password == "": # CHANGE TO A PASSWORD WHEN DONE
             self.start_main_menu()
         else:
             messagebox.showerror("Login Failed", "Invalid username or password")
-
+    # This the main screen function this displays once the correct credencials have been entered
+    # The user can choose from a variety of five buttons each of which will open new windows
     def start_main_menu(self):
         self.login_screen.destroy()
         self.main_screen = Tk()
@@ -73,11 +77,11 @@ class InventoryManagementSystem:
         self.main_screen.configure(bg=self.bg_color)
 
         Label(self.main_screen, text="Welcome to the Inventory Management System", font=self.font, bg=self.bg_color, fg=self.text_color).pack()
-        Button(self.main_screen, text="Tool Management", command=self.start_tool_management, font=self.font, bg=self.button_color, fg=self.text_color).pack()
-        Button(self.main_screen, text="Employee Management", command=self.start_employee_management, font=self.font, bg=self.button_color, fg=self.text_color).pack()
-        Button(self.main_screen, text="Borrow Tool", command=self.start_borrow_tool, font=self.font, bg=self.button_color, fg=self.text_color).pack()
-        Button(self.main_screen, text="Return Tool", command=self.start_return_tool, font=self.font, bg=self.button_color, fg=self.text_color).pack()
-        Button(self.main_screen, text="Generate Reports", command=self.start_generate_reports, font=self.font, bg=self.button_color, fg=self.text_color).pack()
+        Button(self.main_screen, text="Tool Management", command=self.start_tool_management, width=18, font=self.font, bg=self.button_color, fg=self.text_color).pack()
+        Button(self.main_screen, text="Employee Management", command=self.start_employee_management, width=18, font=self.font, bg=self.button_color, fg=self.text_color).pack()
+        Button(self.main_screen, text="Borrow Tool", command=self.start_borrow_tool, width=18, font=self.font, bg=self.button_color, fg=self.text_color).pack()
+        Button(self.main_screen, text="Return Tool", command=self.start_return_tool, width=18, font=self.font, bg=self.button_color, fg=self.text_color).pack()
+        Button(self.main_screen, text="Generate Reports", command=self.start_generate_reports, width=18,font=self.font, bg=self.button_color, fg=self.text_color).pack()
 
         self.main_screen.mainloop()
 
@@ -150,12 +154,15 @@ class ToolManagement:
     def remove_tool(self):
         tool_id = int(self.tool_id_entry.get())
         if tool_id in self.tools:
+            # Remove the specific tool from the dictionary
             del self.tools[tool_id]
+       
+            # Save the updated tools dictionary back to the JSON file
             self.save_data_callback()  # Save updated tools to JSON
+       
             messagebox.showinfo("Success", f"Removed tool with ID {tool_id}")
         else:
             messagebox.showerror("Error", f"No tool found with ID {tool_id}")
-
 
 class EmployeeManagement:
     def __init__(self, employees, save_data_callback, font, bg_color, text_color, button_color):
@@ -192,6 +199,7 @@ class EmployeeManagement:
 
         self.employee_screen.mainloop()
 
+    # These two functions will add and remove employees from the program and write it to a json file
     def add_employee(self):
         name = self.employee_name_entry.get()
         emp_id = len(self.employees) + 1
@@ -208,7 +216,7 @@ class EmployeeManagement:
         else:
             messagebox.showerror("Error", f"No employee found with ID {emp_id}")
 
-
+# This is the borrow tool class/Function that the user cann borrow tools from
 class BorrowTool:
     def __init__(self, tools, employees, borrowed_tools, save_data_callback, font, bg_color, text_color, button_color):
         self.tools = tools
@@ -356,7 +364,7 @@ class ReportGeneration:
 
     def generate_overdue_report(self):
         report = "Overdue Tools Report\n\n"
-        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        today = datetime.datetime.now().strftime("%d/%m/%Y")
         for entry in self.borrowed_tools:
             if entry['return_date'] < today:
                 report += (f"Tool ID: {entry['tool_id']}, Employee: {entry['employee']}, "
