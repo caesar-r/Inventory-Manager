@@ -238,6 +238,10 @@ class BorrowTool:
         self.tool_selection = StringVar()
         self.tool_combobox = ttk.Combobox(self.borrow_screen, textvariable=self.tool_selection, font=self.font)
         self.tool_combobox['values'] = [self.tools[tool_id]['name'] for tool_id in self.tools]
+   
+        # Debugging output to ensure combobox is populated
+        print(f"Combobox values: {self.tool_combobox['values']}")
+   
         self.tool_combobox.grid(row=0, column=1)
 
         Label(self.borrow_screen, text="Select Employee", font=self.font, bg=self.bg_color, fg=self.text_color).grid(row=1, column=0)
@@ -259,25 +263,39 @@ class BorrowTool:
         self.borrow_screen.mainloop()
 
     def borrow_tool_action(self):
-        tool_name = self.tool_selection.get()
+        tool_name = self.tool_selection.get().strip().lower()  # Strip and lowercase for consistent comparison
         employee_name = self.employee_selection.get()
         date_borrowed = self.date_borrowed_entry.get()
         return_date = self.return_date_entry.get()
+   
+        # Debugging output
+        print(f"Trying to borrow: '{tool_name}'")
+   
+        # Check if the tool_name is still empty
+        if not tool_name:
+            messagebox.showerror("Error", "No tool selected")
+            return
+   
         # Find the tool ID and reduce its quantity
         for tool_id, tool_info in self.tools.items():
-            if tool_info['name'] == tool_name and tool_info['quantity'] > 0:
-                self.tools[tool_id]['quantity'] -= 1
-                self.borrowed_tools.append({
-                    "tool_id": tool_id,
-                    "employee": employee_name,
-                    "date_borrowed": date_borrowed,
-                    "return_date": return_date
-                })
-                self.save_data_callback()  # Save updated tools to JSON
-                messagebox.showinfo("Success", f"{employee_name} borrowed {tool_name} from {date_borrowed} to {return_date}")
-                return
-
-        messagebox.showerror("Error", f"No available quantity for {tool_name}")
+            if tool_info['name'].strip().lower() == tool_name:  # Compare consistently
+                if tool_info['quantity'] > 0:
+                    self.tools[tool_id]['quantity'] -= 1
+                    self.borrowed_tools.append({
+                        "tool_id": tool_id,
+                        "employee": employee_name,
+                        "date_borrowed": date_borrowed,
+                        "return_date": return_date
+                    })
+                    self.save_data_callback()  # Save updated tools to JSON
+                    messagebox.showinfo("Success", f"{employee_name} borrowed {tool_name} from {date_borrowed} to {return_date}")
+                    return
+                else:
+                    messagebox.showerror("Error", f"No available quantity for {tool_name}")
+                    return
+   
+        # If tool not found
+        messagebox.showerror("Error", f"No tool found with the name '{tool_name}'")
 
 
 class ReturnTool:
@@ -364,7 +382,7 @@ class ReportGeneration:
 
     def generate_overdue_report(self):
         report = "Overdue Tools Report\n\n"
-        today = datetime.datetime.now().strftime("%d/%m/%Y")
+        today = datetime.datetime.now().strftime("%d-%m-%Y")
         for entry in self.borrowed_tools:
             if entry['return_date'] < today:
                 report += (f"Tool ID: {entry['tool_id']}, Employee: {entry['employee']}, "
