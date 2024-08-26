@@ -5,6 +5,7 @@ import datetime
 # This is the main class for the system
 # This contains the password screen that will need to be completed before the user can enter the program 
 class InventoryManagementSystem:
+    # Initializes the main system, loads data from JSON files, sets up the user interface styles, and starts the login screen.
     def __init__(self):
         self.load_data()
         self.borrowed_tools = []
@@ -85,22 +86,27 @@ class InventoryManagementSystem:
 
         self.main_screen.mainloop()
 
+    # Opens the tool management screen where users can add or remove tools.
     def start_tool_management(self):
         tool_screen = ToolManagement(self.tools, self.save_tools_data, self.font, self.bg_color, self.text_color, self.button_color)
         tool_screen.show_screen()
 
+    # Opens the employee management screen where user can add or remove employees.
     def start_employee_management(self):
         employee_screen = EmployeeManagement(self.employees, self.save_employees_data, self.font, self.bg_color, self.text_color, self.button_color)
         employee_screen.show_screen()
 
+    # Opens the screen to borrow tools, allowing users to select a tool and an employee to borrow the tool.
     def start_borrow_tool(self):
         borrow_screen = BorrowTool(self.tools, self.employees, self.borrowed_tools, self.save_tools_data, self.font, self.bg_color, self.text_color, self.button_color)
         borrow_screen.show_screen()
 
+    # Opens the screen to return tools, allowing users to select a tool and an employee to return the tool.
     def start_return_tool(self):
         return_screen = ReturnTool(self.tools, self.employees, self.borrowed_tools, self.save_tools_data, self.font, self.bg_color, self.text_color, self.button_color)
         return_screen.show_screen()
 
+    # Opens the report generation screen, providing options to generate different types of reports
     def start_generate_reports(self):
         report_screen = ReportGeneration(self.tools, self.borrowed_tools, self.font, self.bg_color, self.text_color, self.button_color)
         report_screen.show_screen()
@@ -118,6 +124,7 @@ class ToolManagement:
         self.button_color = button_color
         self.tool_screen = None
 
+    # Displays the tool management screen with options to add or remove tools.
     def show_screen(self):
         self.tool_screen = Tk()
         self.tool_screen.title("Tool Management")
@@ -150,6 +157,7 @@ class ToolManagement:
         self.tools[tool_id] = {"name": name, "quantity": quantity}
         self.save_data_callback()  # Save updated tools to JSON
         messagebox.showinfo("Success", f"Added {name} with quantity {quantity}")
+
 # This program will remove tools from the system
     def remove_tool(self):
         tool_id = int(self.tool_id_entry.get())
@@ -164,6 +172,7 @@ class ToolManagement:
         else:
             messagebox.showerror("Error", f"No tool found with ID {tool_id}")
 
+# This class will manage all employee operated systems in the program including adding new  employees and removing exesiting ones
 class EmployeeManagement:
     def __init__(self, employees, save_data_callback, font, bg_color, text_color, button_color):
         self.employees = employees
@@ -174,6 +183,7 @@ class EmployeeManagement:
         self.button_color = button_color
         self.employee_screen = None
 
+    # Displays the employee management screen with options to add or remove employees.
     def show_screen(self):
         self.employee_screen = Tk()
         self.employee_screen.title("Employee Management")
@@ -207,6 +217,7 @@ class EmployeeManagement:
         self.save_data_callback()  # Save updated employees to JSON
         messagebox.showinfo("Success", f"Added employee {name} with ID {emp_id}")
 
+    # Removes an employee from the system by their ID and saves the updated data to JSON. 
     def remove_employee(self):
         emp_id = int(self.employee_remove_id_entry.get())
         if emp_id in self.employees:
@@ -229,25 +240,32 @@ class BorrowTool:
         self.button_color = button_color
         self.borrow_screen = None
 
+    # Displays the borrow tool screen where users can select a tool and an employee to borrow it.
     def show_screen(self):
         self.borrow_screen = Tk()
         self.borrow_screen.title("Borrow Tool")
         self.borrow_screen.configure(bg=self.bg_color)
 
         Label(self.borrow_screen, text="Select Tool", font=self.font, bg=self.bg_color, fg=self.text_color).grid(row=0, column=0)
-        self.tool_selection = StringVar()
-        self.tool_combobox = ttk.Combobox(self.borrow_screen, textvariable=self.tool_selection, font=self.font)
-        self.tool_combobox['values'] = [self.tools[tool_id]['name'] for tool_id in self.tools]
-   
-        # Debugging output to ensure combobox is populated
-        print(f"Combobox values: {self.tool_combobox['values']}")
-   
+    
+        # Initialize the StringVar for tool selection
+        self.tool_selection = StringVar(self.borrow_screen)
+    
+        tool_names = [self.tools[tool_id]['name'] for tool_id in self.tools]
+        self.tool_combobox = ttk.Combobox(self.borrow_screen, textvariable=self.tool_selection, values=tool_names, font=self.font)
         self.tool_combobox.grid(row=0, column=1)
 
+        # Debugging output to ensure combobox has stuff
+        print(f"Combobox values: {self.tool_combobox['values']}") 
+
         Label(self.borrow_screen, text="Select Employee", font=self.font, bg=self.bg_color, fg=self.text_color).grid(row=1, column=0)
-        self.employee_selection = StringVar()
-        self.employee_combobox = ttk.Combobox(self.borrow_screen, textvariable=self.employee_selection, font=self.font)
-        self.employee_combobox['values'] = [self.employees[emp_id] for emp_id in self.employees]
+    
+        # Initialize the StringVar for employee selection
+        self.employee_selection = StringVar(self.borrow_screen)
+    
+        # Populate combobox with employee names
+        employee_names = [self.employees[emp_id] for emp_id in self.employees]
+        self.employee_combobox = ttk.Combobox(self.borrow_screen, textvariable=self.employee_selection, values=employee_names, font=self.font)
         self.employee_combobox.grid(row=1, column=1)
 
         Label(self.borrow_screen, text="Date Borrowed", font=self.font, bg=self.bg_color, fg=self.text_color).grid(row=2, column=0)
@@ -261,21 +279,21 @@ class BorrowTool:
         Button(self.borrow_screen, text="Borrow Tool", command=self.borrow_tool_action, font=self.font, bg=self.button_color, fg=self.text_color).grid(row=4, column=0, columnspan=2)
 
         self.borrow_screen.mainloop()
-
+    # Handles the borrowing process, updates the tool quantity, records the transaction, and saves the updated data to JSON.
     def borrow_tool_action(self):
-        tool_name = self.tool_selection.get().strip().lower()  # Strip and lowercase for consistent comparison
-        employee_name = self.employee_selection.get()
+        tool_name = self.tool_selection.get().strip().lower()  # Correctly get the selected tool
+        employee_name = self.employee_selection.get().strip()
         date_borrowed = self.date_borrowed_entry.get()
         return_date = self.return_date_entry.get()
-   
+
         # Debugging output
         print(f"Trying to borrow: '{tool_name}'")
-   
+    
         # Check if the tool_name is still empty
         if not tool_name:
             messagebox.showerror("Error", "No tool selected")
             return
-   
+    
         # Find the tool ID and reduce its quantity
         for tool_id, tool_info in self.tools.items():
             if tool_info['name'].strip().lower() == tool_name:  # Compare consistently
@@ -293,11 +311,13 @@ class BorrowTool:
                 else:
                     messagebox.showerror("Error", f"No available quantity for {tool_name}")
                     return
-   
+    
         # If tool not found
         messagebox.showerror("Error", f"No tool found with the name '{tool_name}'")
 
 
+
+# Allows users to return borrowed tools, updating the inventory and recording the returns.
 class ReturnTool:
     def __init__(self, tools, employees, borrowed_tools, save_data_callback, font, bg_color, text_color, button_color):
         self.tools = tools
@@ -310,6 +330,7 @@ class ReturnTool:
         self.button_color = button_color
         self.return_screen = None
 
+    # Displays the return tool screen where users can select a tool and an employee to return it.
     def show_screen(self):
         self.return_screen = Tk()
         self.return_screen.title("Return Tool")
@@ -331,6 +352,7 @@ class ReturnTool:
 
         self.return_screen.mainloop()
 
+    # Handles the return process, updates the tool quantity, removes the borrowed tool record, and saves the updated data to JSON.
     def return_tool_action(self):
         tool_name = self.tool_selection.get()
         employee_name = self.employee_selection.get()
@@ -345,7 +367,7 @@ class ReturnTool:
 
         messagebox.showerror("Error", f"No record found for {employee_name} borrowing {tool_name}")
 
-
+# This call will Generates different types of reports related to tools, borrowing history, and overdue tools.
 class ReportGeneration:
     def __init__(self, tools, borrowed_tools, font, bg_color, text_color, button_color):
         self.tools = tools
@@ -356,6 +378,7 @@ class ReportGeneration:
         self.button_color = button_color
         self.report_screen = None
 
+    # Displays the report generation screen with options to generate various reports.
     def show_screen(self):
         self.report_screen = Tk()
         self.report_screen.title("Generate Reports")
@@ -367,12 +390,14 @@ class ReportGeneration:
 
         self.report_screen.mainloop()
 
+    # Generates a report of the current inventory, listing all tools and their quantities.
     def generate_inventory_report(self):
         report = "Inventory Report\n\n"
         for tool_id, tool_info in self.tools.items():
             report += f"Tool ID: {tool_id}, Name: {tool_info['name']}, Quantity: {tool_info['quantity']}\n"
         messagebox.showinfo("Inventory Report", report)
 
+    # Generates a report of the borrowing history, listing all borrowed tools with details.
     def generate_borrowing_report(self):
         report = "Borrowing History Report\n\n"
         for entry in self.borrowed_tools:
@@ -380,6 +405,7 @@ class ReportGeneration:
                        f"Borrowed: {entry['date_borrowed']}, Return: {entry['return_date']}\n")
         messagebox.showinfo("Borrowing History Report", report)
 
+    # Generates a report of overdue tools, listing tools that have not been returned by their due dates.
     def generate_overdue_report(self):
         report = "Overdue Tools Report\n\n"
         today = datetime.datetime.now().strftime("%d-%m-%Y")
