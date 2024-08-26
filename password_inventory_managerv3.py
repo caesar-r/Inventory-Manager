@@ -337,15 +337,23 @@ class ReturnTool:
         self.return_screen.configure(bg=self.bg_color)
 
         Label(self.return_screen, text="Select Tool", font=self.font, bg=self.bg_color, fg=self.text_color).grid(row=0, column=0)
-        self.tool_selection = StringVar()
-        self.tool_combobox = ttk.Combobox(self.return_screen, textvariable=self.tool_selection, font=self.font)
-        self.tool_combobox['values'] = [self.tools[tool_id]['name'] for tool_id in self.tools]
+        
+        # Initialize StringVar for tool selection
+        self.tool_selection = StringVar(self.return_screen)
+
+        # Populate combobox with tool names
+        tool_names = [self.tools[tool_id]['name'] for tool_id in self.tools]
+        self.tool_combobox = ttk.Combobox(self.return_screen, textvariable=self.tool_selection, values=tool_names, font=self.font)
         self.tool_combobox.grid(row=0, column=1)
 
         Label(self.return_screen, text="Select Employee", font=self.font, bg=self.bg_color, fg=self.text_color).grid(row=1, column=0)
-        self.employee_selection = StringVar()
-        self.employee_combobox = ttk.Combobox(self.return_screen, textvariable=self.employee_selection, font=self.font)
-        self.employee_combobox['values'] = [self.employees[emp_id] for emp_id in self.employees]
+        
+        # Initialize StringVar for employee selection
+        self.employee_selection = StringVar(self.return_screen)
+
+        # Populate combobox with employee names
+        employee_names = [self.employees[emp_id] for emp_id in self.employees]
+        self.employee_combobox = ttk.Combobox(self.return_screen, textvariable=self.employee_selection, values=employee_names, font=self.font)
         self.employee_combobox.grid(row=1, column=1)
 
         Button(self.return_screen, text="Return Tool", command=self.return_tool_action, font=self.font, bg=self.button_color, fg=self.text_color).grid(row=2, column=0, columnspan=2)
@@ -354,11 +362,20 @@ class ReturnTool:
 
     # Handles the return process, updates the tool quantity, removes the borrowed tool record, and saves the updated data to JSON.
     def return_tool_action(self):
-        tool_name = self.tool_selection.get()
-        employee_name = self.employee_selection.get()
+        tool_name = self.tool_selection.get().strip().lower()  # Correctly get the selected tool
+        employee_name = self.employee_selection.get().strip()
+        
+        # Debugging output
+        print(f"Trying to return: '{tool_name}' by '{employee_name}'")
+
+        # Check if the tool_name is still empty
+        if not tool_name or not employee_name:
+            messagebox.showerror("Error", "No tool or employee selected")
+            return
+        
         # Find the borrowed tool and return it
         for borrowed_tool in self.borrowed_tools:
-            if borrowed_tool['tool_id'] in self.tools and borrowed_tool['employee'] == employee_name:
+            if self.tools[borrowed_tool['tool_id']]['name'].strip().lower() == tool_name and borrowed_tool['employee'] == employee_name:
                 self.tools[borrowed_tool['tool_id']]['quantity'] += 1
                 self.borrowed_tools.remove(borrowed_tool)
                 self.save_data_callback()  # Save updated tools to JSON
@@ -366,6 +383,7 @@ class ReturnTool:
                 return
 
         messagebox.showerror("Error", f"No record found for {employee_name} borrowing {tool_name}")
+
 
 # This call will Generates different types of reports related to tools, borrowing history, and overdue tools.
 class ReportGeneration:
